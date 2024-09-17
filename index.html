@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Command Robot</title>
+    <style>
+      /* Set the background image and styling for the entire page */
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: url('https://images.unsplash.com/photo-1542831371-d531d36971e6?fit=crop&w=1950&q=80') no-repeat center center/cover;
+        color: white;
+      }
+
+      /* Container styling */
+      .container {
+        background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black */
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        text-align: center;
+      }
+
+      /* Heading styling */
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 20px;
+      }
+
+      /* Button styling */
+      button {
+        font-size: 1.5rem;
+        color: #fff;
+        background-color: #007bff;
+        border: none;
+        padding: 10px 20px;
+        margin: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+        transform: scale(1.1);
+      }
+
+      button:focus {
+        outline: none;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 600px) {
+        h1 {
+          font-size: 1.5rem;
+        }
+
+        button {
+          font-size: 1.2rem;
+          padding: 8px 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Control Your Robot</h1>
+      <input type="hidden" name="rob-com" id="rob-com" />
+      <button id="btn0">0</button>
+      <button id="btn1">1</button>
+    </div>
+
+    <script type="module">
+      // Import Firebase libraries
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
+      import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-database.js";
+
+      // Firebase configuration object - Replace with your own details
+      const firebaseConfig = {
+        apiKey: "YOUR_API_KEY_HERE",
+        authDomain: "YOUR_PROJECT_AUTH_DOMAIN",
+        databaseURL: "YOUR_DATABASE_URL",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_STORAGE_BUCKET",
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID",
+        measurementId: "YOUR_MEASUREMENT_ID",
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+
+      // Initialize Realtime Database
+      const db = getDatabase();
+
+      // Get HTML elements
+      let robCmd = document.getElementById("rob-com");
+      let btn0 = document.getElementById("btn0");
+      let btn1 = document.getElementById("btn1");
+
+      // Function to update Firebase with an integer value
+      function updateData(value) {
+        set(ref(db, "cmd/Robot"), Number(value)) // Explicitly convert to a number
+          .then(() => {
+            alert("Command Sent Successfully");
+          })
+          .catch((err) => {
+            alert("Internal Error");
+            console.error(err);
+          });
+      }
+
+      // Event listeners for buttons
+      btn0.addEventListener("click", () => {
+        robCmd.value = 0; // Update hidden input value
+        updateData(0); // Update Firebase with integer 0
+      });
+
+      btn1.addEventListener("click", () => {
+        robCmd.value = 1; // Update hidden input value
+        updateData(1); // Update Firebase with integer 1
+      });
+    </script>
+  </body>
+</html>
